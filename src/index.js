@@ -335,3 +335,4 @@ app.listen(PORT, () => {
   console.log('Server is running under port', PORT);
 });
 
+export default app;
