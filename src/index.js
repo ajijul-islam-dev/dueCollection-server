@@ -329,6 +329,35 @@ app.patch("/customers/:id/due", async (req, res) => {
   }
 });
 
+//api for updating user info
+app.patch('/customers/:id/update', async (req, res) => {
+  const id = req.params.id;  // ✅ No need for await
+
+  try {
+    const { customerName, phoneNumber, village } = req.body; // ✅ No await needed
+
+    let fields = {};
+    if (customerName) fields.customerName = customerName;
+    if (village) fields.village = village;
+    if (phoneNumber) fields.phoneNumber = phoneNumber;
+
+    if (Object.keys(fields).length === 0) {
+      return res.status(400).json({ message: "Cannot update. No valid fields provided." });
+    }
+
+    const updatedCustomer = await Customer.findByIdAndUpdate(id, fields, { new: true });
+
+    if (!updatedCustomer) {
+      return res.status(404).json({ message: "Customer not found" });
+    }
+
+    res.json({ message: "Update succeeded", updatedCustomer });  // ✅ Corrected response format
+  } catch (error) {
+    console.error("Update error:", error);
+    res.status(500).json({ message: "Cannot update the user", error: error.message });
+  }
+});
+
 
 // Start server
 app.listen(PORT, () => {
